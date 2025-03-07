@@ -51,6 +51,18 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		float MoveActionValue = Value.Get<float>();
 		FVector Direction = FVector(1.f, 0.f, 0.f);
 		AddMovementInput(Direction, MoveActionValue);
+		UpdateDirection(MoveActionValue);
+	}
+}
+
+void APlayerCharacter::UpdateDirection(float MoveDirection)
+{
+	FRotator CurrentRotation = Controller->GetControlRotation();
+	float UpdatedRotation = (MoveDirection < 0.f) ? 180.f : 0.f;
+
+	if (CurrentRotation.Yaw != UpdatedRotation)
+	{
+		Controller->SetControlRotation(FRotator(CurrentRotation.Pitch, UpdatedRotation, CurrentRotation.Roll));
 	}
 }
 
