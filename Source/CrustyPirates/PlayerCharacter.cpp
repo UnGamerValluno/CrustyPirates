@@ -28,7 +28,7 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	EnableAttackCollisionBox(false);
+	DisableAttackCollisionBox();
 	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
 	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
 }
@@ -93,7 +93,7 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 		CanAttack = false;
 		CanMove = false;
 
-		EnableAttackCollisionBox(true);
+		EnableAttackCollisionBox();
 		GetAnimInstance()->PlayAnimationOverride(AttackAnimSequence, FName("DefaultSlot"), 1.f, 0.f, OnAttackOverrideEndDelegate);
 	}
 }
@@ -102,21 +102,19 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 {
 	CanAttack = true;
 	CanMove = true;
-	EnableAttackCollisionBox(false);
+	DisableAttackCollisionBox();
 }
 
-void APlayerCharacter::EnableAttackCollisionBox(bool Enabled)
+void APlayerCharacter::EnableAttackCollisionBox()
 {
-	if (Enabled)
-	{
-		AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-	}
-	else
-	{
-		AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-	}
+	AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+}
+
+void APlayerCharacter::DisableAttackCollisionBox()
+{
+	AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 }
 
 void APlayerCharacter::AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
