@@ -1,3 +1,4 @@
+#include "EnemyCharacter.h"
 #include "PlayerCharacter.h"
 
 APlayerCharacter:: APlayerCharacter()
@@ -9,6 +10,9 @@ APlayerCharacter:: APlayerCharacter()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+
+	AttackCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCollisionBox"));
+	AttackCollisionBox->SetupAttachment(RootComponent);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -24,7 +28,9 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
+	EnableAttackCollisionBox(false);
 	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
+	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -87,6 +93,7 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 		CanAttack = false;
 		CanMove = false;
 
+		EnableAttackCollisionBox(true);
 		GetAnimInstance()->PlayAnimationOverride(AttackAnimSequence, FName("DefaultSlot"), 1.f, 0.f, OnAttackOverrideEndDelegate);
 	}
 }
@@ -95,4 +102,29 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 {
 	CanAttack = true;
 	CanMove = true;
+	EnableAttackCollisionBox(false);
+}
+
+void APlayerCharacter::EnableAttackCollisionBox(bool Enabled)
+{
+	if (Enabled)
+	{
+		AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	}
+	else
+	{
+		AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+	}
+}
+
+void APlayerCharacter::AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
+
+	if (Enemy)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, Enemy->GetName());
+	}
 }
