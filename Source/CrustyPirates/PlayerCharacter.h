@@ -8,6 +8,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "InputActionValue.h"
+#include "PaperZDAnimInstance.h"
 #include "PaperZDCharacter.h"
 
 #include "PlayerCharacter.generated.h"
@@ -36,11 +37,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UInputAction* AttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPaperZDAnimSequence* AttackAnimSequence;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool CanAttack = true;
+
+	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
 	APlayerCharacter();
 
@@ -53,4 +62,5 @@ public:
 	void JumpEnded(const FInputActionValue& Value);
 	void Attack(const FInputActionValue& Value);
 	void UpdateDirection(float MoveDirection);
+	void OnAttackOverrideAnimEnd(bool Completed);
 };
