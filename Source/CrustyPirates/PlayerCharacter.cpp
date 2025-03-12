@@ -93,7 +93,6 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 		CanAttack = false;
 		CanMove = false;
 
-		EnableAttackCollisionBox();
 		GetAnimInstance()->PlayAnimationOverride(AttackAnimSequence, FName("DefaultSlot"), 1.f, 0.f, OnAttackOverrideEndDelegate);
 	}
 }
@@ -102,7 +101,6 @@ void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 {
 	CanAttack = true;
 	CanMove = true;
-	DisableAttackCollisionBox();
 }
 
 void APlayerCharacter::EnableAttackCollisionBox()
