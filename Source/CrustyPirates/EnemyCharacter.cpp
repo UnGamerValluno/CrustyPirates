@@ -6,12 +6,16 @@ AEnemyCharacter::AEnemyCharacter()
 
 	PlayerDetectorSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectorSphere"));
 	PlayerDetectorSphere->SetupAttachment(RootComponent);
+
+	HPText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("HPText"));
+	HPText->SetupAttachment(RootComponent);
 }
 
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UpdateHP(HitPoints);
 	PlayerDetectorSphere->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::DetectorOverlapBegin);
 	PlayerDetectorSphere->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::DetectorOverlapEnd);
 }
@@ -27,6 +31,28 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 		UpdateDirection(MoveDirection);
 		AddMovementInput(WorldDirection, MoveDirection);
+	}
+}
+
+void AEnemyCharacter::UpdateHP(int NewHP)
+{
+	HitPoints = NewHP;
+	HPText->SetText(FText::FromString(FString::Printf(TEXT("HP: %d"), HitPoints)));
+}
+
+void AEnemyCharacter::TakeDamage(int Damage, float StunDuration)
+{
+	if (IsAlive)
+	{
+		UpdateHP(HitPoints - Damage);
+
+		if (HitPoints <= 0.f)
+		{
+			UpdateHP(0);
+			HPText->SetHiddenInGame(true);
+			IsAlive = false;
+			CanMove = false;
+		}
 	}
 }
 
