@@ -25,8 +25,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	APlayerCharacter* FollowTarget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPaperZDAnimSequence* AttackAnimSequence;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float StopDistanceToTarget = 70.0f;
+	float StopDistanceToTarget = 70.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackCoolDownInSeconds = 3.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int HitPoints = 100;
@@ -40,18 +46,28 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CanMove = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CanAttack = true;
+
 	FTimerHandle StunTimer;
+	FTimerHandle AttackCoolDownTimer;
+	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
 	AEnemyCharacter();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	void UpdateHP(int NewHP);
 	bool ShouldMoveToTarget();
-	void OnStunTimerTimeout();
-	void Stun(float Duration);
 	void UpdateDirection(float MoveDirection);
+
+	void UpdateHP(int NewHP);
+	void Stun(float Duration);
+	void OnStunTimerTimeout();
 	void TakeDamage(int Damage, float StunDuration);
+
+	void Attack();
+	void OnAttackCoolDownTimerTimeout();
+	void OnAttackOverrideAnimEnd(bool Completed);
 
 	UFUNCTION()
 	void DetectorOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

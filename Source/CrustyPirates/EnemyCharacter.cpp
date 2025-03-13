@@ -16,6 +16,7 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	UpdateHP(HitPoints);
+	OnAttackOverrideEndDelegate.BindUObject(this, &AEnemyCharacter::OnAttackOverrideAnimEnd);
 	PlayerDetectorSphere->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::DetectorOverlapBegin);
 	PlayerDetectorSphere->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::DetectorOverlapEnd);
 }
@@ -24,13 +25,20 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsAlive && CanMove && FollowTarget && !IsStunned && ShouldMoveToTarget())
+	if (IsAlive && FollowTarget && !IsStunned)
 	{
-		float MoveDirection = (FollowTarget->GetActorLocation().X - GetActorLocation().X) > 0.f ? 1.f : -1.f;
-		FVector WorldDirection = FVector(1.f, 0.f, 0.f);
+		if (CanMove && ShouldMoveToTarget())
+		{
+			float MoveDirection = (FollowTarget->GetActorLocation().X - GetActorLocation().X) > 0.f ? 1.f : -1.f;
+			FVector WorldDirection = FVector(1.f, 0.f, 0.f);
 
-		UpdateDirection(MoveDirection);
-		AddMovementInput(WorldDirection, MoveDirection);
+			UpdateDirection(MoveDirection);
+			AddMovementInput(WorldDirection, MoveDirection);
+		}
+		else if (FollowTarget->IsAlive)
+		{
+			Attack();
+		}
 	}
 }
 
@@ -42,6 +50,8 @@ void AEnemyCharacter::UpdateHP(int NewHP)
 
 void AEnemyCharacter::TakeDamage(int Damage, float StunDuration)
 {
+	Stun(StunDuration);
+
 	if (IsAlive)
 	{
 		UpdateHP(HitPoints - Damage);
@@ -52,11 +62,10 @@ void AEnemyCharacter::TakeDamage(int Damage, float StunDuration)
 			UpdateHP(0);
 			IsAlive = false;
 			CanMove = false;
+			CanAttack = false;
 			AnimationNode = "JumpDie";
 			HPText->SetHiddenInGame(true);
 		}
-
-		Stun(StunDuration);
 		GetAnimInstance()->JumpToNode(FName(AnimationNode), FName("CrabbyStateMachine"));
 	}
 }
@@ -119,5 +128,33 @@ void AEnemyCharacter::DetectorOverlapEnd(UPrimitiveComponent* OverlappedComponen
 	if (PlayerCharacter)
 	{
 		FollowTarget = NULL;
+	}
+}
+
+void AEnemyCharacter::Attack()
+{
+	if (IsAlive && CanAttack && !IsStunned)
+	{
+		CanMove = false;
+		CanAttack = false;
+
+		GetAnimInstance()->PlayAnimationOverride(AttackAnimSequence, FName("DefaultSlot"), 1.f, 0.f, OnAttackOverrideEndDelegate);
+		GetWorldTimerManager().SetTimer(AttackCoolDownTimer, this, &AEnemyCharacter::OnAttackCoolDownTimerTimeout, 1.f, false, AttackCoolDownInSeconds);
+	}
+}
+
+void AEnemyCharacter::OnAttackCoolDownTimerTimeout()
+{
+	if (IsAlive)
+	{
+		CanAttack = true;
+	}
+}
+
+void AEnemyCharacter::OnAttackOverrideAnimEnd(bool Completed)
+{
+	if (IsAlive)
+	{
+		CanMove = true;
 	}
 }
