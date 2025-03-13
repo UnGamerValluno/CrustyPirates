@@ -57,7 +57,7 @@ public:
 	int AttackDamage = 25;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	float AttackStunDuration = 0.3f;
+	float AttackStunDuration = 0.5f;
 
 	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
