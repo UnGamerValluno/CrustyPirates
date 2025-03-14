@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/TimerHandle.h"
@@ -21,6 +22,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UTextRenderComponent* HPText;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UBoxComponent* AttackCollisionBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	APlayerCharacter* FollowTarget;
@@ -68,6 +72,15 @@ public:
 	void Attack();
 	void OnAttackCoolDownTimerTimeout();
 	void OnAttackOverrideAnimEnd(bool Completed);
+
+	UFUNCTION(BlueprintCallable)
+	void EnableAttackCollisionBox();
+
+	UFUNCTION(BlueprintCallable)
+	void DisableAttackCollisionBox();
+
+	UFUNCTION()
+	void AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void DetectorOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

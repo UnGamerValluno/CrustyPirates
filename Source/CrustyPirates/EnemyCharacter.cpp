@@ -9,6 +9,9 @@ AEnemyCharacter::AEnemyCharacter()
 
 	HPText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("HPText"));
 	HPText->SetupAttachment(RootComponent);
+
+	AttackCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCollisionBox"));
+	AttackCollisionBox->SetupAttachment(RootComponent);
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -16,7 +19,9 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	UpdateHP(HitPoints);
+	DisableAttackCollisionBox();
 	OnAttackOverrideEndDelegate.BindUObject(this, &AEnemyCharacter::OnAttackOverrideAnimEnd);
+	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::AttackBoxOverlapBegin);
 	PlayerDetectorSphere->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::DetectorOverlapBegin);
 	PlayerDetectorSphere->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::DetectorOverlapEnd);
 }
@@ -59,11 +64,13 @@ void AEnemyCharacter::TakeDamage(int Damage, float StunDuration)
 
 		if (HitPoints <= 0.f)
 		{
-			UpdateHP(0);
 			IsAlive = false;
 			CanMove = false;
 			CanAttack = false;
 			AnimationNode = "JumpDie";
+
+			UpdateHP(0);
+			DisableAttackCollisionBox();
 			HPText->SetHiddenInGame(true);
 		}
 		GetAnimInstance()->JumpToNode(FName(AnimationNode), FName("CrabbyStateMachine"));
@@ -84,6 +91,7 @@ void AEnemyCharacter::Stun(float Duration)
 		GetWorldTimerManager().ClearTimer(StunTimer);
 	}
 
+	DisableAttackCollisionBox();
 	GetWorldTimerManager().SetTimer(StunTimer, this, &AEnemyCharacter::OnStunTimerTimeout, 1.f, false, Duration);
 	GetAnimInstance()->StopAllAnimationOverrides();
 }
@@ -156,5 +164,27 @@ void AEnemyCharacter::OnAttackOverrideAnimEnd(bool Completed)
 	if (IsAlive)
 	{
 		CanMove = true;
+	}
+}
+
+void AEnemyCharacter::EnableAttackCollisionBox()
+{
+	AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+}
+
+void AEnemyCharacter::DisableAttackCollisionBox()
+{
+	AttackCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AttackCollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+}
+
+void AEnemyCharacter::AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+
+	if (Player)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("Nos dieron perri"));
 	}
 }
