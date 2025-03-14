@@ -73,6 +73,7 @@ void AEnemyCharacter::TakeDamage(int Damage, float StunDuration)
 			DisableAttackCollisionBox();
 			HPText->SetHiddenInGame(true);
 		}
+
 		GetAnimInstance()->JumpToNode(FName(AnimationNode), FName("CrabbyStateMachine"));
 	}
 }
@@ -186,5 +187,6 @@ void AEnemyCharacter::AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedCompo
 	if (Player)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("Nos dieron perri"));
+		Player->TakeDamage(AttackDamage, AttackStunDuration);
 	}
 }

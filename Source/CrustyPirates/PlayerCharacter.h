@@ -44,6 +44,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPaperZDAnimSequence* AttackAnimSequence;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int HitPoints = 100;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
 
@@ -66,6 +69,9 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	void UpdateHP(int NewHP);
+	void TakeDamage(int Damage, float StunDuration);
 
 	void Move(const FInputActionValue& Value);
 	void JumpStarted(const FInputActionValue& Value);

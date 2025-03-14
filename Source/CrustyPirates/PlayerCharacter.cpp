@@ -97,6 +97,33 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 	}
 }
 
+void APlayerCharacter::UpdateHP(int NewHP)
+{
+	HitPoints = NewHP;
+}
+
+void APlayerCharacter::TakeDamage(int Damage, float StunDuration)
+{
+	if (IsAlive)
+	{
+		UpdateHP(HitPoints - Damage);
+		auto AnimationNode = "JumpTakeHit";
+
+		if (HitPoints <= 0.f)
+		{
+			IsAlive = false;
+			CanMove = false;
+			CanAttack = false;
+			AnimationNode = "JumpDie";
+
+			UpdateHP(0);
+			DisableAttackCollisionBox();
+		}
+
+		GetAnimInstance()->JumpToNode(FName(AnimationNode), FName("CaptainStateMachine"));
+	}
+}
+
 void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 {
 	CanAttack = true;

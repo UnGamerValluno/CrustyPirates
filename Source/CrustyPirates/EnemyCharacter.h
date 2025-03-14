@@ -53,6 +53,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CanAttack = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int AttackDamage = 25;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float AttackStunDuration = 0.3f;
+
 	FTimerHandle StunTimer;
 	FTimerHandle AttackCoolDownTimer;
 	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
