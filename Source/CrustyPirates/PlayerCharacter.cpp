@@ -53,7 +53,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-	if (IsAlive && CanMove)
+	if (IsAlive && CanMove && !IsStunned)
 	{
 		float MoveActionValue = Value.Get<float>();
 		FVector Direction = FVector(1.f, 0.f, 0.f);
@@ -75,7 +75,7 @@ void APlayerCharacter::UpdateDirection(float MoveDirection)
 
 void APlayerCharacter::JumpStarted(const FInputActionValue& Value)
 {
-	if (IsAlive && CanMove)
+	if (IsAlive && CanMove && !IsStunned)
 	{
 		Jump();
 	}
@@ -88,7 +88,7 @@ void APlayerCharacter::JumpEnded(const FInputActionValue& Value)
 
 void APlayerCharacter::Attack(const FInputActionValue& Value)
 {
-	if (IsAlive && CanAttack)
+	if (IsAlive && CanAttack && !IsStunned)
 	{
 		CanAttack = false;
 		CanMove = false;
@@ -102,8 +102,29 @@ void APlayerCharacter::UpdateHP(int NewHP)
 	HitPoints = NewHP;
 }
 
+void APlayerCharacter::Stun(float Duration)
+{
+	IsStunned = true;
+
+	if (GetWorldTimerManager().IsTimerActive(StunTimer))
+	{
+		GetWorldTimerManager().ClearTimer(StunTimer);
+	}
+
+	DisableAttackCollisionBox();
+	GetWorldTimerManager().SetTimer(StunTimer, this, &APlayerCharacter::OnStunTimerTimeout, 1.f, false, Duration);
+	GetAnimInstance()->StopAllAnimationOverrides();
+}
+
+void APlayerCharacter::OnStunTimerTimeout()
+{
+	IsStunned = false;
+}
+
 void APlayerCharacter::TakeDamage(int Damage, float StunDuration)
 {
+	Stun(StunDuration);
+
 	if (IsAlive)
 	{
 		UpdateHP(HitPoints - Damage);

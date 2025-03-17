@@ -186,7 +186,6 @@ void AEnemyCharacter::AttackBoxOverlapBegin(UPrimitiveComponent* OverlappedCompo
 
 	if (Player)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("Nos dieron perri"));
 		Player->TakeDamage(AttackDamage, AttackStunDuration);
 	}
 }

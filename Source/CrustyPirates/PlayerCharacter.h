@@ -4,6 +4,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/InputComponent.h"
 #include "CoreMinimal.h"
+#include "Engine/TimerHandle.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/Controller.h"
@@ -50,6 +51,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsStunned = false;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool CanMove = true;
 
@@ -62,6 +66,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	float AttackStunDuration = 0.5f;
 
+	FTimerHandle StunTimer;
 	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
 	APlayerCharacter();
@@ -71,6 +76,8 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	void UpdateHP(int NewHP);
+	void Stun(float Duration);
+	void OnStunTimerTimeout();
 	void TakeDamage(int Damage, float StunDuration);
 
 	void Move(const FInputActionValue& Value);
