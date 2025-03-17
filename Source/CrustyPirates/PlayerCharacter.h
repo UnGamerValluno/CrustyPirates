@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "PaperZDAnimInstance.h"
 #include "PaperZDCharacter.h"
+#include "PlayerHUD.h"
 
 #include "PlayerCharacter.generated.h"
 
@@ -44,6 +45,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPaperZDAnimSequence* AttackAnimSequence;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPlayerHUD> PlayerHUDClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPlayerHUD* PlayerHUDWidget;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int HitPoints = 100;

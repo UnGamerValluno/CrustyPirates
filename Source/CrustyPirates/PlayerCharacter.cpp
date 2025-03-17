@@ -1,4 +1,5 @@
 #include "EnemyCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerCharacter.h"
 
 APlayerCharacter:: APlayerCharacter()
@@ -31,6 +32,18 @@ void APlayerCharacter::BeginPlay()
 	DisableAttackCollisionBox();
 	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
 	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
+
+	if (PlayerHUDClass)
+	{
+		PlayerHUDWidget = CreateWidget<UPlayerHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0), PlayerHUDClass);
+		if (PlayerHUDWidget)
+		{
+			PlayerHUDWidget->AddToPlayerScreen();
+			PlayerHUDWidget->SetHP(HitPoints);
+			PlayerHUDWidget->SetLevel(1);
+			PlayerHUDWidget->SetDiamonds(50);
+		}
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -100,6 +113,7 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 void APlayerCharacter::UpdateHP(int NewHP)
 {
 	HitPoints = NewHP;
+	PlayerHUDWidget->SetHP(HitPoints);
 }
 
 void APlayerCharacter::Stun(float Duration)
