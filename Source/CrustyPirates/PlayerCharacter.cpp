@@ -29,10 +29,12 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
+	// Attack animations
 	DisableAttackCollisionBox();
 	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
 	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
 
+	// HUD
 	if (PlayerHUDClass)
 	{
 		PlayerHUDWidget = CreateWidget<UPlayerHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0), PlayerHUDClass);
@@ -43,6 +45,13 @@ void APlayerCharacter::BeginPlay()
 			PlayerHUDWidget->SetLevel(1);
 			PlayerHUDWidget->SetDiamonds(50);
 		}
+	}
+
+	// Game instance
+	GameInstance = Cast<UCrustyPiratesGameInstance>(GetGameInstance());
+	if (GameInstance)
+	{
+		HitPoints = GameInstance->PlayerHP;
 	}
 }
 
@@ -114,6 +123,7 @@ void APlayerCharacter::UpdateHP(int NewHP)
 {
 	HitPoints = NewHP;
 	PlayerHUDWidget->SetHP(HitPoints);
+	GameInstance->SetPlayerHP(HitPoints);
 }
 
 void APlayerCharacter::Stun(float Duration)

@@ -4,6 +4,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/InputComponent.h"
 #include "CoreMinimal.h"
+#include "CrustyPiratesGameInstance.h"
 #include "Engine/TimerHandle.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -51,6 +52,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPlayerHUD* PlayerHUDWidget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCrustyPiratesGameInstance* GameInstance;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int HitPoints = 100;
