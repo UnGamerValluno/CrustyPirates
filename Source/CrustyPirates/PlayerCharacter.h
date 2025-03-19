@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CollectableItem.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/InputComponent.h"
@@ -14,6 +15,7 @@
 #include "PaperZDAnimInstance.h"
 #include "PaperZDCharacter.h"
 #include "PlayerHUD.h"
+#include "Sound/SoundBase.h"
 
 #include "PlayerCharacter.generated.h"
 
@@ -56,6 +58,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UCrustyPiratesGameInstance* GameInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* ItemCollectedSound;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int HitPoints = 100;
 
@@ -93,9 +98,13 @@ public:
 
 	void Move(const FInputActionValue& Value);
 	void JumpStarted(const FInputActionValue& Value);
-	void JumpEnded(const FInputActionValue& Value);
-	void Attack(const FInputActionValue& Value);
+	void JumpEnded(const FInputActionValue& Value);	
 	void UpdateDirection(float MoveDirection);
+
+	void UnlockDoubleJump();
+	void CollectItem(CollectableType ItemType);
+
+	void Attack(const FInputActionValue& Value);
 	void OnAttackOverrideAnimEnd(bool Completed);
 
 	UFUNCTION(BlueprintCallable)

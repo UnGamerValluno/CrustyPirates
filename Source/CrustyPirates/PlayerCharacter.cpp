@@ -43,7 +43,7 @@ void APlayerCharacter::BeginPlay()
 			PlayerHUDWidget->AddToPlayerScreen();
 			PlayerHUDWidget->SetHP(HitPoints);
 			PlayerHUDWidget->SetLevel(1);
-			PlayerHUDWidget->SetDiamonds(50);
+			PlayerHUDWidget->SetDiamonds(0);
 		}
 	}
 
@@ -52,6 +52,12 @@ void APlayerCharacter::BeginPlay()
 	if (GameInstance)
 	{
 		HitPoints = GameInstance->PlayerHP;
+	}
+
+	// Power Up
+	if (GameInstance->IsDoubleJumpUnlocked)
+	{
+		UnlockDoubleJump();
 	}
 }
 
@@ -167,6 +173,44 @@ void APlayerCharacter::TakeDamage(int Damage, float StunDuration)
 
 		GetAnimInstance()->JumpToNode(FName(AnimationNode), FName("CaptainStateMachine"));
 	}
+}
+
+void APlayerCharacter::CollectItem(CollectableType ItemType)
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), ItemCollectedSound);
+
+	switch (ItemType)
+	{
+		case CollectableType::HealthPotion:
+		{
+			UpdateHP(HitPoints + 25);
+		}break;
+
+		case CollectableType::Diamond:
+		{
+			GameInstance->AddDiamond(1);
+			PlayerHUDWidget->SetDiamonds(GameInstance->Diamonds);
+		}break;
+
+		case CollectableType::DoubleJumpUpgrade:
+		{
+			if (!GameInstance->IsDoubleJumpUnlocked)
+			{
+				GameInstance->IsDoubleJumpUnlocked = true;
+				UnlockDoubleJump();
+			}
+		}break;
+
+		default:
+		{
+
+		}break;
+	}
+}
+
+void APlayerCharacter::UnlockDoubleJump()
+{
+	JumpMaxCount = 2;
 }
 
 void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
