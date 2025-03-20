@@ -36,7 +36,7 @@ public:
 	float StopDistanceToTarget = 70.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackCoolDownInSeconds = 3.f;
+	float AttackCoolDownInSeconds = 2.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int HitPoints = 100;

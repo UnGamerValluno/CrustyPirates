@@ -12,6 +12,9 @@ class CRUSTYPIRATES_API UCrustyPiratesGameInstance : public UGameInstance
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int CurrentLevelIndex = 1;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int PlayerHP = 100;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -22,4 +25,7 @@ public:
 
 	void SetPlayerHP(int NewHP);
 	void AddDiamond(int Amount);
+
+	void RestartGame();
+	void ChangeLevel(int LevelIndex);
 };

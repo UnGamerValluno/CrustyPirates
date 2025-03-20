@@ -34,6 +34,13 @@ void APlayerCharacter::BeginPlay()
 	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
 	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
 
+	// Game instance
+	GameInstance = Cast<UCrustyPiratesGameInstance>(GetGameInstance());
+	if (GameInstance)
+	{
+		HitPoints = GameInstance->PlayerHP;
+	}
+
 	// HUD
 	if (PlayerHUDClass)
 	{
@@ -41,17 +48,10 @@ void APlayerCharacter::BeginPlay()
 		if (PlayerHUDWidget)
 		{
 			PlayerHUDWidget->AddToPlayerScreen();
-			PlayerHUDWidget->SetHP(HitPoints);
-			PlayerHUDWidget->SetLevel(1);
-			PlayerHUDWidget->SetDiamonds(0);
+			PlayerHUDWidget->SetHP(GameInstance->PlayerHP);
+			PlayerHUDWidget->SetDiamonds(GameInstance->Diamonds);
+			PlayerHUDWidget->SetLevel(GameInstance->CurrentLevelIndex);
 		}
-	}
-
-	// Game instance
-	GameInstance = Cast<UCrustyPiratesGameInstance>(GetGameInstance());
-	if (GameInstance)
-	{
-		HitPoints = GameInstance->PlayerHP;
 	}
 
 	// Power Up
@@ -151,6 +151,11 @@ void APlayerCharacter::OnStunTimerTimeout()
 	IsStunned = false;
 }
 
+void APlayerCharacter::OnRestartGameTimerTimeout()
+{
+	GameInstance->RestartGame();
+}
+
 void APlayerCharacter::TakeDamage(int Damage, float StunDuration)
 {
 	Stun(StunDuration);
@@ -169,6 +174,9 @@ void APlayerCharacter::TakeDamage(int Damage, float StunDuration)
 
 			UpdateHP(0);
 			DisableAttackCollisionBox();
+
+			float RestartDelay = 2.f;
+			GetWorldTimerManager().SetTimer(RestartGameTimer, this, &APlayerCharacter::OnRestartGameTimerTimeout, 1.f, false, RestartDelay);
 		}
 
 		GetAnimInstance()->JumpToNode(FName(AnimationNode), FName("CaptainStateMachine"));

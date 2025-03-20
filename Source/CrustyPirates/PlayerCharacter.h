@@ -83,6 +83,7 @@ public:
 	float AttackStunDuration = 0.5f;
 
 	FTimerHandle StunTimer;
+	FTimerHandle RestartGameTimer;
 	FZDOnAnimationOverrideEndSignature OnAttackOverrideEndDelegate;
 
 	APlayerCharacter();
@@ -94,6 +95,7 @@ public:
 	void UpdateHP(int NewHP);
 	void Stun(float Duration);
 	void OnStunTimerTimeout();
+	void OnRestartGameTimerTimeout();
 	void TakeDamage(int Damage, float StunDuration);
 
 	void Move(const FInputActionValue& Value);
