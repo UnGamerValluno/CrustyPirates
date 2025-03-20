@@ -67,6 +67,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool IsActive = true;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsStunned = false;
 
@@ -92,6 +95,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	void Deactivate();
 	void UpdateHP(int NewHP);
 	void Stun(float Duration);
 	void OnStunTimerTimeout();

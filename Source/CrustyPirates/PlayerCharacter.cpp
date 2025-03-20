@@ -1,4 +1,5 @@
 #include "EnemyCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCharacter.h"
 
@@ -160,7 +161,7 @@ void APlayerCharacter::TakeDamage(int Damage, float StunDuration)
 {
 	Stun(StunDuration);
 
-	if (IsAlive)
+	if (IsAlive && IsActive)
 	{
 		UpdateHP(HitPoints - Damage);
 		auto AnimationNode = "JumpTakeHit";
@@ -221,10 +222,25 @@ void APlayerCharacter::UnlockDoubleJump()
 	JumpMaxCount = 2;
 }
 
+void APlayerCharacter::Deactivate()
+{
+	if (IsActive)
+	{
+		CanMove = false;
+		IsActive = false;
+		CanAttack = false;
+
+		GetCharacterMovement()->StopMovementImmediately();
+	}
+}
+
 void APlayerCharacter::OnAttackOverrideAnimEnd(bool Completed)
 {
-	CanAttack = true;
-	CanMove = true;
+	if (IsAlive && IsActive)
+	{
+		CanAttack = true;
+		CanMove = true;
+	}
 }
 
 void APlayerCharacter::EnableAttackCollisionBox()
