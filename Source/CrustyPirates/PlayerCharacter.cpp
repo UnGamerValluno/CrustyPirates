@@ -21,45 +21,11 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(InputMappingContext, 0);
-		}
-	}
-
-	// Attack animations
-	DisableAttackCollisionBox();
-	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
-	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
-
-	// Game instance
-	GameInstance = Cast<UCrustyPiratesGameInstance>(GetGameInstance());
-	if (GameInstance)
-	{
-		HitPoints = GameInstance->PlayerHP;
-	}
-
-	// HUD
-	if (PlayerHUDClass)
-	{
-		PlayerHUDWidget = CreateWidget<UPlayerHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0), PlayerHUDClass);
-		if (PlayerHUDWidget)
-		{
-			PlayerHUDWidget->AddToPlayerScreen();
-			PlayerHUDWidget->SetHP(GameInstance->PlayerHP);
-			PlayerHUDWidget->SetDiamonds(GameInstance->Diamonds);
-			PlayerHUDWidget->SetLevel(GameInstance->CurrentLevelIndex);
-		}
-	}
-
-	// Power Up
-	if (GameInstance->IsDoubleJumpUnlocked)
-	{
-		UnlockDoubleJump();
-	}
+	SetUpInputMappingContext();
+	SetUpAttackAnimations();
+	SetUpGameInstance();
+	SetUpHUD();
+	SetUpPowerUps();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -84,6 +50,56 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::QuitGame()
 {
 	UKismetSystemLibrary::QuitGame(GetWorld(), UGameplayStatics::GetPlayerController(GetWorld(), 0), EQuitPreference::Quit, false);
+}
+
+void APlayerCharacter::SetUpHUD()
+{
+	if (PlayerHUDClass)
+	{
+		PlayerHUDWidget = CreateWidget<UPlayerHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0), PlayerHUDClass);
+		if (PlayerHUDWidget)
+		{
+			PlayerHUDWidget->AddToPlayerScreen();
+			PlayerHUDWidget->SetHP(GameInstance->PlayerHP);
+			PlayerHUDWidget->SetDiamonds(GameInstance->Diamonds);
+			PlayerHUDWidget->SetLevel(GameInstance->CurrentLevelIndex);
+		}
+	}
+}
+
+void APlayerCharacter::SetUpPowerUps()
+{
+	if (GameInstance && GameInstance->IsDoubleJumpUnlocked)
+	{
+		UnlockDoubleJump();
+	}
+}
+
+void APlayerCharacter::SetUpGameInstance()
+{
+	GameInstance = Cast<UCrustyPiratesGameInstance>(GetGameInstance());
+	if (GameInstance)
+	{
+		HitPoints = GameInstance->PlayerHP;
+	}
+}
+
+void APlayerCharacter::SetUpAttackAnimations()
+{
+	DisableAttackCollisionBox();
+	OnAttackOverrideEndDelegate.BindUObject(this, &APlayerCharacter::OnAttackOverrideAnimEnd);
+	AttackCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::AttackBoxOverlapBegin);
+}
+
+void APlayerCharacter::SetUpInputMappingContext()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)

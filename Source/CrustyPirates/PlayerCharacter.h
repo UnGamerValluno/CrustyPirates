@@ -99,6 +99,12 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	void QuitGame();
+	void SetUpHUD();
+	void SetUpPowerUps();
+	void SetUpGameInstance();
+	void SetUpAttackAnimations();
+	void SetUpInputMappingContext();
+
 	void Deactivate();
 	void UpdateHP(int NewHP);
 	void Stun(float Duration);
