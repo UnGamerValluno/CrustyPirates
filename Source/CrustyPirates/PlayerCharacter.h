@@ -47,6 +47,9 @@ public:
 	UInputAction* AttackAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UInputAction* QuitAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPaperZDAnimSequence* AttackAnimSequence;
 
 	UPROPERTY(EditAnywhere)
@@ -95,6 +98,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	void QuitGame();
 	void Deactivate();
 	void UpdateHP(int NewHP);
 	void Stun(float Duration);
