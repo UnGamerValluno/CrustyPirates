@@ -26,6 +26,8 @@ public:
 	void SetPlayerHP(int NewHP);
 	void AddDiamond(int Amount);
 
+	UFUNCTION(BlueprintCallable)
 	void RestartGame();
+
 	void ChangeLevel(int LevelIndex);
 };

@@ -105,7 +105,9 @@ public:
 	void SetUpAttackAnimations();
 	void SetUpInputMappingContext();
 
+	UFUNCTION(BlueprintCallable)
 	void Deactivate();
+
 	void UpdateHP(int NewHP);
 	void Stun(float Duration);
 	void OnStunTimerTimeout();
