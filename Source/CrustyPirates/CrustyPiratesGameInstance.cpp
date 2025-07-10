@@ -11,6 +11,18 @@ void UCrustyPiratesGameInstance::AddDiamond(int Amount)
 	Diamonds += Amount;
 }
 
+void UCrustyPiratesGameInstance::KillEnemy()
+{
+	EnemiesPerLevel[CurrentLevelIndex - 1]--;
+	UE_LOG(LogTemp, Warning, TEXT("Current level %d"), CurrentLevelIndex);
+	UE_LOG(LogTemp, Warning, TEXT("Enemy killed %d"), EnemiesPerLevel[CurrentLevelIndex - 1]);
+}
+
+bool UCrustyPiratesGameInstance::IsLevelCleared()
+{
+	return EnemiesPerLevel[CurrentLevelIndex - 1] == 0;
+}
+
 void UCrustyPiratesGameInstance::RestartGame()
 {
 	Diamonds = 0;

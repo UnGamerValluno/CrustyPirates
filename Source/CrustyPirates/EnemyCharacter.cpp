@@ -1,3 +1,4 @@
+#include "CrustyPiratesGameInstance.h"
 #include "EnemyCharacter.h"
 
 AEnemyCharacter::AEnemyCharacter()
@@ -72,6 +73,12 @@ void AEnemyCharacter::TakeDamage(int Damage, float StunDuration)
 			UpdateHP(0);
 			DisableAttackCollisionBox();
 			HPText->SetHiddenInGame(true);
+
+			UCrustyPiratesGameInstance* GameInstance = Cast<UCrustyPiratesGameInstance>(GetGameInstance());
+			if (GameInstance)
+			{
+				GameInstance->KillEnemy();
+			}
 		}
 
 		GetAnimInstance()->JumpToNode(FName(AnimationNode), FName("CrabbyStateMachine"));

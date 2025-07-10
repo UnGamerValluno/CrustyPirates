@@ -2,6 +2,7 @@
 
 #include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
+#include "CrustyPiratesGameInstance.h"
 #include "Engine/TimerHandle.h"
 #include "GameFramework/Actor.h"
 #include "PaperFlipbookComponent.h"
@@ -23,6 +24,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USoundBase* PlayerEnterSound;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCrustyPiratesGameInstance* GameInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int TargetLevelIndex;

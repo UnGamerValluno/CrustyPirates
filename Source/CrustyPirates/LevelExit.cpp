@@ -20,6 +20,9 @@ void ALevelExit::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GameInstance = Cast<UCrustyPiratesGameInstance>(GetGameInstance());
+	check(GameInstance);
+
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ALevelExit::OverlapBegin);
 }
 
@@ -30,18 +33,14 @@ void ALevelExit::Tick(float DeltaTime)
 
 void ALevelExit::OnWaitTimerTimeout()
 {
-	UCrustyPiratesGameInstance* GameInstance = Cast<UCrustyPiratesGameInstance>(GetGameInstance());
-	if (GameInstance)
-	{
-		GameInstance->ChangeLevel(TargetLevelIndex);
-	}
+	GameInstance->ChangeLevel(TargetLevelIndex);
 }
 
 void ALevelExit::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
 
-	if (Player && Player->IsAlive && IsActive)
+	if (Player && Player->IsAlive && IsActive && GameInstance->IsLevelCleared())
 	{
 		IsActive = false;
 
