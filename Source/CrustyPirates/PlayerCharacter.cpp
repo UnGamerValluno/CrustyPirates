@@ -150,7 +150,7 @@ void APlayerCharacter::Attack(const FInputActionValue& Value)
 
 void APlayerCharacter::UpdateHP(int NewHP)
 {
-	HitPoints = NewHP;
+	HitPoints = std::min(MaxHitPoints, NewHP);
 	PlayerHUDWidget->SetHP(HitPoints);
 	GameInstance->SetPlayerHP(HitPoints);
 }

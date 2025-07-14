@@ -65,7 +65,10 @@ public:
 	USoundBase* ItemCollectedSound;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int HitPoints = 100;
+	int MaxHitPoints = 150;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int HitPoints = 150;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsAlive = true;
