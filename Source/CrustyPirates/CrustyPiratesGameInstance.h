@@ -23,7 +23,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsDoubleJumpUnlocked = false;
 
-	int EnemiesPerLevel[3] = { 1, 6, 8 };
+	int EnemiesPerLevel[3] = { 1, 6, 7 };
 
 	void SetPlayerHP(int NewHP);
 	void AddDiamond(int Amount);
