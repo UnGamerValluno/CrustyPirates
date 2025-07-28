@@ -119,7 +119,7 @@ public:
 
 	void Move(const FInputActionValue& Value);
 	void JumpStarted(const FInputActionValue& Value);
-	void JumpEnded(const FInputActionValue& Value);	
+	void JumpEnded(const FInputActionValue& Value);
 	void UpdateDirection(float MoveDirection);
 
 	void UnlockDoubleJump();
