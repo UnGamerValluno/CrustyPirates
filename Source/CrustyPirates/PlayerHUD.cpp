@@ -17,4 +17,3 @@ void UPlayerHUD::SetDiamonds(int Diamonds)
 	FString Str = FString::Printf(TEXT("Diamonds: %d"), Diamonds);
 	DiamondsText->SetText(FText::FromString(Str));
 }
-

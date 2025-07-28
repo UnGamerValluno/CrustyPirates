@@ -1,7 +1,7 @@
+#include "PlayerCharacter.h"
 #include "EnemyCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerCharacter.h"
 
 APlayerCharacter:: APlayerCharacter()
 {

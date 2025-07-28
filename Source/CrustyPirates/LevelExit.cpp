@@ -1,6 +1,6 @@
+#include "LevelExit.h"
 #include "CrustyPiratesGameInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "LevelExit.h"
 #include "PlayerCharacter.h"
 
 ALevelExit::ALevelExit()

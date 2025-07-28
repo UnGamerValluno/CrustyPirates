@@ -35,5 +35,3 @@ void ACollectableItem::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AA
 		Destroy();
 	}
 }
-
-

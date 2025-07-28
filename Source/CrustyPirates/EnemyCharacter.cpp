@@ -1,5 +1,5 @@
-#include "CrustyPiratesGameInstance.h"
 #include "EnemyCharacter.h"
+#include "CrustyPiratesGameInstance.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
